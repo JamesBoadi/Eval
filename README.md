@@ -1,2 +1,2 @@
-# Eval
+# LogicEvaluator
 Created with CodeSandbox
