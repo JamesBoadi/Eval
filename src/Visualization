@@ -5,12 +5,11 @@ type Props = {
   editPage: boolean;
 };
 
-export default function Visualisation() {
+export default function Visualization() {
   return (
     <>
-    <div>
-      
-    </div>
+    <button>Button 1</button>
+    <button>Button 2</button>
     </>
   );
 }
