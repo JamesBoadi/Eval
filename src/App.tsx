@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Visualization from "./Visualization";
 
 const values =
@@ -8,7 +8,13 @@ const values =
 }
 
 export default function App() {
-  
+
+  useEffect(() => {
+    console.log("Effect");
+  }, []);
+
+
+
   return (
     <>
       <Visualization {...values}> </Visualization>
