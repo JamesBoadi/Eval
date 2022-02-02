@@ -1,15 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface Props {
   previewPage: boolean;
   editPage: boolean;
-};
+}
 
 export default function Visualization(props: Props) {
+  const [_buttonOneClicked, setButtonOneClicked] = useState(false);
+
+  let buttonOneClicked = (hide: boolean) => {
+    console.log("hide button two");
+  };
+
+  let drawLine = () => {
+   
+  };
+
+  let hideLine = () => {
+    
+  };
+
+  /*
+  Empty array acts like componentDidMount
+
+  useEffect(() => {
+    console.log("Effect");
+  }, []); */
+
+  useEffect(() => {
+    if (_buttonOneClicked) buttonOneClicked(true);
+    else buttonOneClicked(false);
+  }, [_buttonOneClicked]);
+
   return (
     <>
-    <button>Button 1</button>
-    <button>Button 2</button>
+      <button onClick={() => setButtonOneClicked(!buttonOneClicked)}>
+        Draw Line
+      </button>
+      <button>Hide Line</button>
     </>
   );
 }
