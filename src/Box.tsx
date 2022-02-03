@@ -13,6 +13,13 @@ export interface Coordinates
 
 export default function Box() {
   
+  const renderBox = () => {
+     
+    
+
+  }
+
+
   return (
     <>
     
