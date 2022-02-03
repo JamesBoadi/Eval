@@ -1,8 +1,17 @@
 import React, { useEffect } from "react";
 
+export type Graph =
+{
+  Coordinates: Coordinates[];
+}
+
+export interface Coordinates
+{
+  x: number;
+  y: number;
+}
+
 export default function Box() {
-
-
   
   return (
     <>
@@ -12,3 +21,5 @@ export default function Box() {
     </>
   );
 }
+
+
