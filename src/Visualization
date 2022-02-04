@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Box from './Box';
 
 interface Props {
   previewPage: boolean;
@@ -38,6 +39,8 @@ export default function Visualization(props: Props) {
         Draw Line
       </button>
       <button>Hide Line</button>
+      <Box className="BoxOne"/>
+      <Box className="BoxTwo"/>
     </>
   );
 }
