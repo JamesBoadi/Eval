@@ -10,14 +10,34 @@ export interface Coordinates {
   y: number;
 }
 
+export interface Pos {
+  prevX: number;
+  prevY: number;
+  currX: number;
+  currY: number;
+}
+
+interface Props {
+  color?: string;
+  className?: string;
+}
+
 //let list = new List<Graph>();
 //   let x = list.get().Coordinates.x;
 // let y = list.get().Coordinates.y;
 
-export default function Box() {
+export default function Box(props: Props) {
   const renderBox = () => {
-    return <rect width="300" height="100" 
-    style={{ color: "yellow" }} />;
+    return (
+      <rect
+        onMouseEnter={(e) => {
+          console.log(`${props.className}`);
+        }}
+        width="300"
+        height="100"
+        style={{ color: props.color }}
+      />
+    );
   };
 
   return (
@@ -25,8 +45,8 @@ export default function Box() {
       <svg width="400" height="110">
         {renderBox()}
       </svg>
-
     </>
   );
 }
+
 
