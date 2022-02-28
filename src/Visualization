@@ -1,46 +1,51 @@
-import React, { useEffect, useState } from "react";
-import Box from './Box';
 
-interface Props {
-  previewPage: boolean;
-  editPage: boolean;
+import React, { useEffect } from "react";
+import List from "./List";
+
+export type Graph = {
+  Coordinates: Coordinates;
+};
+
+export interface Coordinates {
+  x: number;
+  y: number;
 }
 
-export default function Visualization(props: Props) {
-  const [_buttonOneClicked, setButtonOneClicked] = useState(false);
+export interface Pos {
+  prevX: number;
+  prevY: number;
+  currX: number;
+  currY: number;
+}
 
-  let buttonOneClicked = (hide: boolean) => {
-    console.log("hide button two");
+interface Props {
+  color?: string;
+  className: string;
+}
+//let list = new List<Graph>();
+//   let x = list.get().Coordinates.x;
+// let y = list.get().Coordinates.y;
+
+export default function Box(props: Props) {
+  const renderBox = () => {
+    return (
+      <rect
+        onMouseEnter={(e) => {
+          console.log(`${props.className}`);
+        }}
+        width="400" // can also adjust to loading bar animation
+        height="100"
+        style={{ fill:`${props.color}`}}
+       // style={{ backgroundColor:`${props.color}`}}
+      />
+    );
   };
-
-  let drawLine = () => {
-   
-  };
-
-  let hideLine = () => {
-    
-  };
-
-  /*
-  Empty array acts like componentDidMount
-
-  useEffect(() => {
-    console.log("Effect");
-  }, []); */
-
-  useEffect(() => {
-    if (_buttonOneClicked) buttonOneClicked(true);
-    else buttonOneClicked(false);
-  }, [_buttonOneClicked]);
 
   return (
     <>
-      <button onClick={() => setButtonOneClicked(!buttonOneClicked)}>
-        Draw Line
-      </button>
-      <button>Hide Line</button>
-      <Box className="BoxOne"/>
-      <Box className="BoxTwo"/>
+      <svg>
+        {renderBox()}
+      </svg>
     </>
   );
 }
