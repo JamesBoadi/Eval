@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import List from "./List";
+import React, { useEffect, useState } from "react";
+import Cache from "./Cache";
 
 export type Graph = {
   Coordinates: Coordinates;
@@ -19,34 +19,51 @@ export interface Pos {
 
 interface Props {
   color?: string;
-  className?: string;
+  className: string;
 }
 
-//let list = new List<Graph>();
-//   let x = list.get().Coordinates.x;
-// let y = list.get().Coordinates.y;
-
 export default function Box(props: Props) {
+  const cache = new Cache<Graph>();
+
+  function getCoordinates(e: React.MouseEvent<SVGRectElement>) {
+    const clientX = e.clientX;
+    const clientY = e.clientY;
+
+    cache.
+
+    // cache.add(0,0);
+    if(cache.containsKey(0) !== false)
+    {
+      cache.update(0);
+    }
+      
+
+   // list.add(0, {clientX)
+  //  console.log("clientX " + clientX);
+  //  console.log("clientY " + clientY);
+  }
+
+  //
+  //   let x = list.get().Coordinates.x;
+  // let y = list.get().Coordinates.y;
+
   const renderBox = () => {
     return (
       <rect
-        onMouseEnter={(e) => {
-          console.log(`${props.className}`);
+        onMouseMove={(e) => {
+          getCoordinates(e);
         }}
-        width="300"
+        width="400" // can also adjust to loading bar animation
         height="100"
-        style={{ color: props.color }}
+        style={{ fill: `${props.color}` }}
+        // style={{ backgroundColor:`${props.color}`}}
       />
     );
   };
 
   return (
     <>
-      <svg width="400" height="110">
-        {renderBox()}
-      </svg>
+      <svg>{renderBox()}</svg>
     </>
   );
 }
-
-
