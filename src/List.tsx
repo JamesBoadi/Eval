@@ -1,25 +1,30 @@
-export default class List<T>
+export default class Cache<T>
 {
-  list = new Array();
+  cache = new Array();
 
-  add<T>(item: T)
+  add(key: number, item: T)
   {
-    this.list[0] = item;
+    this.cache[key] = item;
   }
 
-  get(): T
+  get(key: number): T
   {
-    return this.list[0];
+    return this.cache[key];
+  }
+
+  containsKey(key: number)
+  {
+    return (this.cache[key] ?? false);
   }
 
   remove()
   {
-    this.list.pop();
+    this.cache.pop();
   }
 
-  update<T>(item: T)
+  update(key: number, item: T)
   {
-    this.list[0] = item;
+    this.cache[key] = item;
   }
 
 }
