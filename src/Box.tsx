@@ -18,6 +18,7 @@ export interface Pos {
 }
 
 interface Props {
+  id: number;
   color?: string;
   className: string;
 }
@@ -25,33 +26,31 @@ interface Props {
 export default function Box(props: Props) {
   const cache = new Cache<Graph>();
 
-  function getCoordinates(e: React.MouseEvent<SVGRectElement>) {
+  function setCoordinates(e: React.MouseEvent<SVGRectElement>) {
     const clientX = e.clientX;
     const clientY = e.clientY;
 
-    cache.
+    const id = props.id;
 
-    // cache.add(0,0);
-    if(cache.containsKey(0) !== false)
-    {
-      cache.update(0);
+    if (cache.containsKey(id) !== false) {
+      cache.add(id, { Coordinates: { x: clientX, y: clientY } });
+      console.log(
+        cache.get(id).Coordinates.x + " two " + cache.get(id).Coordinates.y
+      );
+      return;
     }
-      
 
-   // list.add(0, {clientX)
-  //  console.log("clientX " + clientX);
-  //  console.log("clientY " + clientY);
+    cache.update(id, { Coordinates: { x: clientX, y: clientY } });
+    console.log(
+      cache.get(id).Coordinates.x + " one " + cache.get(id).Coordinates.y
+    );
   }
-
-  //
-  //   let x = list.get().Coordinates.x;
-  // let y = list.get().Coordinates.y;
 
   const renderBox = () => {
     return (
       <rect
         onMouseMove={(e) => {
-          getCoordinates(e);
+          setCoordinates(e);
         }}
         width="400" // can also adjust to loading bar animation
         height="100"
