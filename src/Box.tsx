@@ -17,10 +17,8 @@ interface Props {
   id: number;
   color?: string;
   className: string;
-  x1?: string | number;
-  y1?: string | number;
-  x2?: string | number;
-  y2?: string | number;
+  x: string | number;
+  y: string | number;
 }
 
 const cache = new Cache<Graph>();
@@ -64,7 +62,7 @@ export default function Box(props: Props) {
           x1: prevCoor?.Coordinates.x1,
           y1: prevCoor?.Coordinates.y1,
           x2: pageX,
-          y2: pageY,
+          y2: pageY
         }
       };
 
@@ -72,7 +70,7 @@ export default function Box(props: Props) {
         cache.add(id, coordinates);
         return;
       }
-      
+
       cache.update(id, coordinates);
       setLineEnd(coordinates);
     }
@@ -112,25 +110,13 @@ export default function Box(props: Props) {
         }}
         width="400" // can also adjust to loading bar animation
         height="100"
+        x={props.x} // will be needed for interactive game
+        y={props.y}
         style={{ fill: `${props.color}` }}
         // style={{ backgroundColor:`${props.color}`}}
       />
     );
   };
 
-  return (
-    <>
-      <svg>
-        {renderBox()}
-
-        <DrawLine
-          isDragging={isDragging}
-          x1={lineStart?.Coordinates.x1}
-          y1={lineStart?.Coordinates.y1}
-          x2={lineEnd?.Coordinates.x2}
-          y2={lineEnd?.Coordinates.y2}
-        />
-      </svg>
-    </>
-  );
+  return <>{renderBox()}</>;
 }
