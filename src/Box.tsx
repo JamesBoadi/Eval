@@ -1,56 +1,114 @@
-import React, { useEffect, useState } from "react";
+import React, { useDebugValue, useEffect, useState } from "react";
 import Cache from "./Cache";
+import DrawLine from "./DrawLine";
 
-export type Graph = {
+type Graph = {
   Coordinates: Coordinates;
 };
 
-export interface Coordinates {
-  x: number;
-  y: number;
-}
-
-export interface Pos {
-  prevX: number;
-  prevY: number;
-  currX: number;
-  currY: number;
+interface Coordinates {
+  x1?: string | number;
+  y1?: string | number;
+  x2?: string | number;
+  y2?: string | number;
 }
 
 interface Props {
   id: number;
   color?: string;
   className: string;
+  x1?: string | number;
+  y1?: string | number;
+  x2?: string | number;
+  y2?: string | number;
 }
 
+const cache = new Cache<Graph>();
+
 export default function Box(props: Props) {
-  const cache = new Cache<Graph>();
+  const [lineStart, setLineStart] = useState<Graph | undefined>(undefined);
+  const [lineEnd, setLineEnd] = useState<Graph | undefined>(undefined);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
 
-  function setCoordinates(e: React.MouseEvent<SVGRectElement>) {
-    const clientX = e.clientX;
-    const clientY = e.clientY;
+  let id = props.id;
 
-    const id = props.id;
+  function setStartCoordinates(e: React.MouseEvent<HTMLDivElement>) {
+    //e.preventDefault();
+    const pageX = e.pageX;
+    const pageY = e.pageY;
+    const prevCoor = cache.get(id);
 
-    if (cache.containsKey(id) !== false) {
-      cache.add(id, { Coordinates: { x: clientX, y: clientY } });
-      console.log(
-        cache.get(id).Coordinates.x + " two " + cache.get(id).Coordinates.y
-      );
-      return;
+    const coordinates = {
+      Coordinates: {
+        x1: pageX,
+        y1: pageY,
+        x2: prevCoor?.Coordinates.x2,
+        y2: prevCoor?.Coordinates.y2
+      }
+    };
+
+    cache.add(id, coordinates);
+    setLineStart(coordinates);
+  }
+
+  function setEndCoordinates(e: React.MouseEvent<SVGRectElement>) {
+    //e.preventDefault();
+    const pageX = e.pageX;
+    const pageY = e.pageY;
+    const prevCoor = cache.get(id);
+
+    if (pageX && pageY !== undefined) {
+      const coordinates = {
+        Coordinates: {
+          x1: prevCoor?.Coordinates.x1,
+          y1: prevCoor?.Coordinates.y1,
+          x2: pageX,
+          y2: pageY,
+        }
+      };
+
+      if (cache.containsKey(id) === false) {
+        cache.add(id, coordinates);
+        return;
+      }
+      
+      cache.update(id, coordinates);
+      setLineEnd(coordinates);
     }
+  }
 
-    cache.update(id, { Coordinates: { x: clientX, y: clientY } });
-    console.log(
-      cache.get(id).Coordinates.x + " one " + cache.get(id).Coordinates.y
-    );
+  function handleDragStart(e: React.MouseEvent<any>) {
+    if (e.type === "mousemove" && isDragging) {
+      setEndCoordinates(e); // Set ending coordinates
+    } else if (e.type === "mousedown") {
+      setIsDragging(true);
+      setStartCoordinates(e);
+    }
+  }
+
+  function reset() {
+    setLineStart(undefined);
+    setLineEnd(undefined);
+    cache.clear();
+  }
+
+  function handleDragEnd(e: React.MouseEvent<any>) {
+    setIsDragging(false);
+    reset();
   }
 
   const renderBox = () => {
     return (
       <rect
+        onMouseDown={(e) => {
+          handleDragStart(e);
+        }}
+        onMouseUp={(e) => {
+          handleDragEnd(e);
+        }}
         onMouseMove={(e) => {
-          setCoordinates(e);
+          handleDragStart(e);
         }}
         width="400" // can also adjust to loading bar animation
         height="100"
@@ -62,7 +120,17 @@ export default function Box(props: Props) {
 
   return (
     <>
-      <svg>{renderBox()}</svg>
+      <svg>
+        {renderBox()}
+
+        <DrawLine
+          isDragging={isDragging}
+          x1={lineStart?.Coordinates.x1}
+          y1={lineStart?.Coordinates.y1}
+          x2={lineEnd?.Coordinates.x2}
+          y2={lineEnd?.Coordinates.y2}
+        />
+      </svg>
     </>
   );
 }
