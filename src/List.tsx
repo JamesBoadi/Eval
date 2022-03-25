@@ -1,30 +1,25 @@
-export default class Cache<T>
-{
+export default class Cache<T> {
   cache = new Array();
 
-  add(key: number, item: T)
-  {
+  add(key: number, item: T) {
     this.cache[key] = item;
   }
 
-  get(key: number): T
-  {
+  get(key: number): T {
     return this.cache[key];
   }
 
-  containsKey(key: number)
-  {
-    return (this.cache[key] ?? false);
+  containsKey(key: number) {
+    return this.cache[key] ?? false;
   }
 
-  remove()
-  {
-    this.cache.pop();
+  clear() {
+    this.cache.forEach((_) => {
+      this.cache.pop();
+    });
   }
 
-  update(key: number, item: T)
-  {
+  update(key: number, item: T) {
     this.cache[key] = item;
   }
-
 }
