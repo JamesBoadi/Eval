@@ -1,12 +1,132 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "./Box";
+import Cache from "./Cache";
+import DrawLine from "./DrawLine";
 
-export default function Visualization() {
+type Graph = {
+  Coordinates: Coordinates;
+};
+
+interface Coordinates {
+  x1?: string | number;
+  y1?: string | number;
+  x2?: string | number;
+  y2?: string | number;
+}
+
+interface Props {
+  id: number;
+  color?: string;
+  className: string;
+  x1?: string | number;
+  y1?: string | number;
+  x2?: string | number;
+  y2?: string | number;
+}
+
+const cache = new Cache<Graph>();
+
+export default function Visualization(props: Props) {
+  const [lineStart, setLineStart] = useState<Graph | undefined>(undefined);
+  const [lineEnd, setLineEnd] = useState<Graph | undefined>(undefined);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+
+  let id = props.id;
+
+  function setStartCoordinates(e: React.MouseEvent<HTMLDivElement>) {
+    //e.preventDefault();
+    const pageX = e.pageX;
+    const pageY = e.pageY;
+    const prevCoor = cache.get(id);
+
+    const coordinates = {
+      Coordinates: {
+        x1: pageX,
+        y1: pageY,
+        x2: prevCoor?.Coordinates.x2,
+        y2: prevCoor?.Coordinates.y2
+      }
+    };
+
+    cache.add(id, coordinates);
+    setLineStart(coordinates);
+  }
+
+  function setEndCoordinates(e: React.MouseEvent<SVGRectElement>) {
+    //e.preventDefault();
+    const pageX = e.pageX;
+    const pageY = e.pageY;
+    const prevCoor = cache.get(id);
+
+    if (pageX && pageY !== undefined) {
+      const coordinates = {
+        Coordinates: {
+          x1: prevCoor?.Coordinates.x1,
+          y1: prevCoor?.Coordinates.y1,
+          x2: pageX,
+          y2: pageY
+        }
+      };
+
+      if (cache.containsKey(id) === false) {
+        cache.add(id, coordinates);
+        return;
+      }
+
+      cache.update(id, coordinates);
+      setLineEnd(coordinates);
+    }
+  }
+
+  function reset() {
+    setLineStart(undefined);
+    setLineEnd(undefined);
+    cache.clear();
+  }
+
+  function handleDragStart(e: React.MouseEvent<any>) {
+    if (e.type === "mousemove" && isDragging) {
+      setEndCoordinates(e); // Set ending coordinates
+    } else if (e.type === "mousedown") {
+      setIsDragging(true);
+      setStartCoordinates(e);
+    }
+  }
+
+  function handleDragEnd(e: React.MouseEvent<any>) {
+    setIsDragging(false);
+    reset();
+  }
+
   return (
     <>
-      <Box className="Box1" id={0}/>
-      <Box className="Box2" id={1} />
+      <div
+        onMouseDown={(e) => {
+          handleDragStart(e);
+        }}
+        onMouseUp={(e) => {
+          handleDragEnd(e);
+        }}
+        onMouseMove={(e) => {
+          handleDragStart(e);
+        }}
+      >
+
+      <svg width="600" height="1000">
+        <Box className="Box1" id={0} color={"blue"} x={0} y={0} />
+        <br />
+        <Box className="Box2" id={1} color={"red"}  x={0} y={400}/>
+
+        <DrawLine
+          isDragging={isDragging}
+          x1={lineStart?.Coordinates.x1}
+          y1={lineStart?.Coordinates.y1}
+          x2={lineEnd?.Coordinates.x2}
+          y2={lineEnd?.Coordinates.y2}
+        />
+        </svg>
+      </div>
     </>
   );
 }
-
